@@ -2,7 +2,9 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"strings"
+	"sync"
 	"v0/internal/delivery/http/params"
 	"v0/internal/delivery/http/request"
 	"v0/internal/delivery/http/response"
@@ -52,28 +54,50 @@ func (s *JobService) CreateJob(jobRequest *request.JobRequest) (int, error) {
 
 func (s *JobService) GetJob(jobParam *params.JobParam) ([]*response.JobResponse, error) {
 
-	jobs, err := s.jobRepository.GetJobs(
-		jobParam.Name,
-		jobParam.Country,
-		jobParam.SalaryMin,
-		jobParam.SalaryMax)
+	var wg sync.WaitGroup
+	wg.Add(2)
 
-	if err != nil {
-		return nil, err
+	jobChan := make(chan []*entity.Job, 2)
+	errChan := make(chan error, 2)
+
+	go func() {
+		defer wg.Done()
+		jobs, err := s.jobRepository.GetJobs(jobParam.Name, jobParam.Country, jobParam.SalaryMin, jobParam.SalaryMax)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		jobChan <- jobs
+	}()
+
+	go func() {
+		defer wg.Done()
+		jobs, err := s.externalAPIRepository.GetJobs(jobParam.Name, jobParam.Country, jobParam.SalaryMin, jobParam.SalaryMax)
+		if err != nil {
+			errChan <- err
+			return
+		}
+		jobChan <- jobs
+	}()
+
+	go func() {
+		wg.Wait()
+		close(jobChan)
+		close(errChan)
+	}()
+
+	var allJobs []*entity.Job
+	var allErrors []error
+	for j := range jobChan {
+		allJobs = append(allJobs, j...)
+	}
+	for err := range errChan {
+		allErrors = append(allErrors, err)
 	}
 
-	jobExternal, err := s.externalAPIRepository.GetJobs(
-		jobParam.Name,
-		jobParam.Country,
-		jobParam.SalaryMin,
-		jobParam.SalaryMax)
-
-	if err != nil {
-		return nil, err
-	}
-	for _, job := range jobExternal {
-		jobs = append(jobs, job)
+	if len(allErrors) > 0 {
+		return nil, fmt.Errorf("errors occurred: %v", allErrors)
 	}
 
-	return response.ConvertToJobResponses(jobs), nil
+	return response.ConvertToJobResponses(allJobs), nil
 }
