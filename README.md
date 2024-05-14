@@ -2,45 +2,6 @@
 
 You have been asked to implement **Jobberwocky** , a service that works as a store for job opportunities, where companies can share open positions.
 
-## Initial setup
-
-Install sql3
-go get -u github.com/mattn/go-sqlite3@latest
-configurar el gopath
-ejecutar go mod init
-
-configuracion inicial
-installar homebrew, admin de paquetes default para mac
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-luego node
-brew install node
-
-verificamos la instalacion
-
-node -v
-npm -v
-
-con esto ya podemos correr el inicailizador y el compilador
-
-si nos sale el error que donde no tenemos configurado el gopath:
-entonces ejecutamos
-export GO111MODULE=on para permitir al proyecto crear un nombre explicito a la 
-creación de inicializador.
-
-go mod init v0
-go mod tidy
-
-con esto, ya podemos correr comandos como:
-go get [libreria] para instalar dependecias.
-
-Para correr los test instalamos gomock,
-nos permite crear mocks de interfaces y setear
-las expectativas en nuestros test.
-
-Lo vamos a usar para validar nuestros servicios
-
-
 ## 1. Create a job posting service
 
 Implement an application that exposes an API that lets users register new job opportunities.
