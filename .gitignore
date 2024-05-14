@@ -1,0 +1,24 @@
+# Archivos de compilación binarios
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Directorio build
+/build/
+
+# Archivos de configuración generados por el editor
+.idea/
+.vscode/
+
+# Dependencias
+/vendor/
+/pkg/*
+/go.sum
+/go.mod
+
+# Archivos temporales
+*.log
+*.out
+*.test
