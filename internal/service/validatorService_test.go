@@ -66,9 +66,8 @@ func TestJobValidatorService_Validate(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 
-			validator := service.NewJobValidatorService()
-
-			err := validator.Validate(test.jobRequest)
+			validator := service.NewJobValidatorService(test.jobRequest)
+			err := validator.Validate()
 
 			assert.Equal(t, test.expectedErr, err)
 		})

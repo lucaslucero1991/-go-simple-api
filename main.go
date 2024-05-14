@@ -25,18 +25,17 @@ func main() {
 	// Service configurations
 	jobService := service.NewJobService(jobRepository)
 
-	// Validator service
-	validator := service.NewJobValidatorService()
-
 	// Handler configurations
-	jobHandler := handler.NewJobHandler(jobService, validator)
+	jobHandler := handler.NewJobHandler(jobService)
 
 	// Create new router
 	router := mux.NewRouter()
 	http.Handle("/", middleware.JSONContentTypeMiddleware(router))
 
 	// Register handlers
-	router.HandleFunc("/jobs", jobHandler.CreateJob).Methods("POST")
+	jobsPath := "jobs"
+	router.HandleFunc(jobsPath, jobHandler.CreateJob).Methods(http.MethodPost)
+	router.HandleFunc(jobsPath, jobHandler.GetJob).Methods(http.MethodGet)
 
 	log.Println("Starting server on port 8080...")
 	err = http.ListenAndServe(":8080", nil)

@@ -13,28 +13,29 @@ const (
 )
 
 type IValidatorService interface {
-	Validate(jobRequest *request.JobRequest) error
+	Validate() error
 }
 
 type JobValidatorService struct {
+	jobRequest *request.JobRequest
 }
 
-func NewJobValidatorService() IValidatorService {
-	return &JobValidatorService{}
+func NewJobValidatorService(jobRequest *request.JobRequest) IValidatorService {
+	return &JobValidatorService{jobRequest: jobRequest}
 }
 
-func (s *JobValidatorService) Validate(jobRequest *request.JobRequest) error {
-	if jobRequest.Name == "" {
+func (s *JobValidatorService) Validate() error {
+	if s.jobRequest.Name == "" {
 		return fmt.Errorf(ErrMissingNameField)
 	}
-	if jobRequest.Country == "" {
+	if s.jobRequest.Country == "" {
 		return fmt.Errorf(ErrMissingCountryField)
 	}
-	if jobRequest.Salary == 0 {
+	if s.jobRequest.Salary == 0 {
 
 		return fmt.Errorf(ErrMissingSalaryField)
 	}
-	if len(jobRequest.Skills) == 0 {
+	if len(s.jobRequest.Skills) == 0 {
 
 		return fmt.Errorf(ErrMissingSkillsField)
 	}

@@ -7,3 +7,12 @@ type Job struct {
 	Salary  int
 	Skills  string
 }
+
+func NewJob(name string, country string, salary int, skills string) *Job {
+	return &Job{
+		Name:    name,
+		Country: country,
+		Salary:  salary,
+		Skills:  skills,
+	}
+}
