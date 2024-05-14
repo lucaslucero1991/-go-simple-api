@@ -10,6 +10,13 @@ import (
 	"v0/internal/entity"
 )
 
+type ExternalJob struct {
+	Name    string   `json:"name"`
+	Salary  int      `json:"salary"`
+	Country string   `json:"country"`
+	Skills  []string `json:"skills"`
+}
+
 type IExternalAPIRepository interface {
 	GetJobs(name string, country string, salaryMin int, salaryMax int) ([]*entity.Job, error)
 }
@@ -52,22 +59,23 @@ func (r *ExternalAPIRepository) GetJobs(name string,
 		return nil, fmt.Errorf("status code %d", resp.StatusCode)
 	}
 
-	var jobs [][]interface{}
-	err = json.NewDecoder(resp.Body).Decode(&jobs)
-	if err != nil {
+	var externalJobs [][]interface{}
+	if err := json.NewDecoder(resp.Body).Decode(&externalJobs); err != nil {
 		return nil, err
 	}
 
-	var jobList []*entity.Job
-	for _, jobData := range jobs {
-		job := entity.NewJob(jobData[0].(string),
-			jobData[2].(string),
-			int(jobData[1].(float64)),
-			joinStringSlice(jobData[3].([]interface{})))
-		jobList = append(jobList, job)
+	var jobs []*entity.Job
+	for _, jobData := range externalJobs {
+		job := &entity.Job{
+			Name:    jobData[0].(string),
+			Salary:  int(jobData[1].(float64)),
+			Country: jobData[2].(string),
+			Skills:  strings.Join(jobData[3].([]string), ", "),
+		}
+		jobs = append(jobs, job)
 	}
 
-	return jobList, nil
+	return jobs, nil
 }
 
 func joinStringSlice(slice []interface{}) string {
