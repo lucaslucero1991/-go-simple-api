@@ -1,6 +1,7 @@
 package service_test
 
 import (
+	"errors"
 	"testing"
 	service2 "v0/internal/service"
 
@@ -19,7 +20,7 @@ func (m *MockJobRepository) CreateJob(job *entity.Job) (int, error) {
 	return args.Int(0), args.Error(1)
 }
 
-func TestCreateJob(t *testing.T) {
+func TestCreateJob_WhenCreateJobWasSuccess_ThenReturnJobId(t *testing.T) {
 	// Arrange
 	mockRepo := new(MockJobRepository)
 	mockRepo.On("CreateJob", mock.Anything).Return(123, nil)
@@ -38,4 +39,26 @@ func TestCreateJob(t *testing.T) {
 	// Assert
 	assert.NoError(t, err)
 	assert.Equal(t, 123, jobID)
+}
+
+func TestCreateJob_WhenCreateJobFailed_ThenReturnErr(t *testing.T) {
+	// Arrange
+	mockRepo := new(MockJobRepository)
+	mockRepo.On("CreateJob", mock.Anything).Return(0,
+		errors.New("dummy error"))
+	mockJobRequest := &request.JobRequest{
+		Name:    "Software Engineer",
+		Salary:  5000,
+		Country: "USA",
+		Skills:  []string{"Go", "Java", "Python"},
+	}
+
+	service := service2.NewJobService(mockRepo)
+
+	// Act
+	jobID, err := service.CreateJob(mockJobRequest)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Equal(t, 0, jobID)
 }
