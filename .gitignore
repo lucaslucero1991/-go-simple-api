@@ -14,7 +14,7 @@
 
 # Dependencias
 /vendor/
-/pkg/*
+pkg/
 
 # Archivos temporales
 *.log
