@@ -15,8 +15,6 @@
 # Dependencias
 /vendor/
 /pkg/*
-/go.sum
-/go.mod
 
 # Archivos temporales
 *.log

@@ -16,11 +16,16 @@ type IJobService interface {
 }
 
 type JobService struct {
-	jobRepository repository.IJobRepository
+	jobRepository         repository.IJobRepository
+	externalAPIRepository repository.IExternalAPIRepository
 }
 
-func NewJobService(jobRepository repository.IJobRepository) IJobService {
-	return &JobService{jobRepository: jobRepository}
+func NewJobService(
+	jobRepository repository.IJobRepository,
+	externalAPIRepository repository.IExternalAPIRepository) IJobService {
+	return &JobService{
+		jobRepository:         jobRepository,
+		externalAPIRepository: externalAPIRepository}
 }
 
 func (s *JobService) CreateJob(jobRequest *request.JobRequest) (int, error) {
@@ -46,6 +51,7 @@ func (s *JobService) CreateJob(jobRequest *request.JobRequest) (int, error) {
 }
 
 func (s *JobService) GetJob(jobParam *params.JobParam) ([]*response.JobResponse, error) {
+
 	jobs, err := s.jobRepository.GetJobs(
 		jobParam.Name,
 		jobParam.Country,
@@ -54,6 +60,19 @@ func (s *JobService) GetJob(jobParam *params.JobParam) ([]*response.JobResponse,
 
 	if err != nil {
 		return nil, err
+	}
+
+	jobExternal, err := s.externalAPIRepository.GetJobs(
+		jobParam.Name,
+		jobParam.Country,
+		jobParam.SalaryMin,
+		jobParam.SalaryMax)
+
+	if err != nil {
+		return nil, err
+	}
+	for _, job := range jobExternal {
+		jobs = append(jobs, job)
 	}
 
 	return response.ConvertToJobResponses(jobs), nil

@@ -21,9 +21,10 @@ func main() {
 
 	// Repositories configurations
 	jobRepository := repository.NewSQLiteJobRepository(db)
+	externalRepository := repository.NewExternalAPIRepository()
 
 	// Service configurations
-	jobService := service.NewJobService(jobRepository)
+	jobService := service.NewJobService(jobRepository, externalRepository)
 
 	// Handler configurations
 	jobHandler := handler.NewJobHandler(jobService)
@@ -33,7 +34,7 @@ func main() {
 	http.Handle("/", middleware.JSONContentTypeMiddleware(router))
 
 	// Register handlers
-	jobsPath := "jobs"
+	jobsPath := "/jobs"
 	router.HandleFunc(jobsPath, jobHandler.CreateJob).Methods(http.MethodPost)
 	router.HandleFunc(jobsPath, jobHandler.GetJob).Methods(http.MethodGet)
 
