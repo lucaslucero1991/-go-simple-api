@@ -66,22 +66,23 @@ func (r *ExternalAPIRepository) GetJobs(name string,
 
 	var jobs []*entity.Job
 	for _, jobData := range externalJobs {
-		job := &entity.Job{
-			Name:    jobData[0].(string),
-			Salary:  int(jobData[1].(float64)),
-			Country: jobData[2].(string),
-			Skills:  strings.Join(jobData[3].([]string), ", "),
+		name := jobData[0].(string)
+		salary := int(jobData[1].(float64))
+		country := jobData[2].(string)
+
+		skillsInterface, ok := jobData[3].([]interface{})
+		if !ok {
+			return nil, fmt.Errorf("skills should be an array of strings")
 		}
+		var skills []string
+		for _, skill := range skillsInterface {
+			skills = append(skills, skill.(string))
+		}
+		skillsStr := strings.Join(skills, ", ")
+
+		job := entity.NewJob(name, country, salary, skillsStr)
 		jobs = append(jobs, job)
 	}
 
 	return jobs, nil
-}
-
-func joinStringSlice(slice []interface{}) string {
-	strSlice := make([]string, len(slice))
-	for i, v := range slice {
-		strSlice[i] = v.(string)
-	}
-	return strings.Join(strSlice, ",")
 }
