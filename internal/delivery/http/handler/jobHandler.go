@@ -6,16 +6,16 @@ import (
 	"net/http"
 	"v0/internal/delivery/http/params"
 	"v0/internal/delivery/http/request"
-	"v0/internal/service"
+	"v0/internal/useCase"
 )
 
 type JobHandler struct {
-	jobService service.IJobService
+	jobUseCase useCase.IJobUseCase
 }
 
-func NewJobHandler(jobService service.IJobService) *JobHandler {
+func NewJobHandler(jobUseCase useCase.IJobUseCase) *JobHandler {
 	return &JobHandler{
-		jobService: jobService}
+		jobUseCase: jobUseCase}
 }
 
 func (j *JobHandler) CreateJob(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +26,7 @@ func (j *JobHandler) CreateJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jobId, err := j.jobService.CreateJob(&jobRequest)
+	jobId, err := j.jobUseCase.CreateJob(&jobRequest)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -44,7 +44,7 @@ func (j *JobHandler) GetJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jobs, err := j.jobService.GetJob(params.NewJobParam(r))
+	jobs, err := j.jobUseCase.GetJob(params.NewJobParam(r))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

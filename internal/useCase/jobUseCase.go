@@ -1,4 +1,4 @@
-package service
+package useCase
 
 import (
 	"errors"
@@ -12,27 +12,27 @@ import (
 	"v0/internal/repository"
 )
 
-type IJobService interface {
+type IJobUseCase interface {
 	CreateJob(jobRequest *request.JobRequest) (int, error)
 	GetJob(jobParam *params.JobParam) ([]*response.JobResponse, error)
 }
 
-type JobService struct {
+type JobUseCase struct {
 	jobRepository         repository.IJobRepository
 	externalAPIRepository repository.IExternalAPIRepository
 }
 
-func NewJobService(
+func NewJobUseCase(
 	jobRepository repository.IJobRepository,
-	externalAPIRepository repository.IExternalAPIRepository) IJobService {
-	return &JobService{
+	externalAPIRepository repository.IExternalAPIRepository) IJobUseCase {
+	return &JobUseCase{
 		jobRepository:         jobRepository,
 		externalAPIRepository: externalAPIRepository}
 }
 
-func (s *JobService) CreateJob(jobRequest *request.JobRequest) (int, error) {
+func (s *JobUseCase) CreateJob(jobRequest *request.JobRequest) (int, error) {
 
-	validator := NewJobValidatorService(jobRequest)
+	validator := NewJobValidatorUseCase(jobRequest)
 	err := validator.Validate()
 	if err != nil {
 		return 0, errors.New(err.Error())
@@ -52,7 +52,7 @@ func (s *JobService) CreateJob(jobRequest *request.JobRequest) (int, error) {
 	return jobID, nil
 }
 
-func (s *JobService) GetJob(jobParam *params.JobParam) ([]*response.JobResponse, error) {
+func (s *JobUseCase) GetJob(jobParam *params.JobParam) ([]*response.JobResponse, error) {
 
 	var wg sync.WaitGroup
 	wg.Add(2)

@@ -1,4 +1,4 @@
-package service
+package useCase
 
 import (
 	"fmt"
@@ -12,19 +12,19 @@ const (
 	ErrMissingSkillsField  = "missing skills field in job request"
 )
 
-type IValidatorService interface {
+type IValidatorUseCase interface {
 	Validate() error
 }
 
-type JobValidatorService struct {
+type JobValidatorUseCase struct {
 	jobRequest *request.JobRequest
 }
 
-func NewJobValidatorService(jobRequest *request.JobRequest) IValidatorService {
-	return &JobValidatorService{jobRequest: jobRequest}
+func NewJobValidatorUseCase(jobRequest *request.JobRequest) IValidatorUseCase {
+	return &JobValidatorUseCase{jobRequest: jobRequest}
 }
 
-func (s *JobValidatorService) Validate() error {
+func (s *JobValidatorUseCase) Validate() error {
 	if s.jobRequest.Name == "" {
 		return fmt.Errorf(ErrMissingNameField)
 	}

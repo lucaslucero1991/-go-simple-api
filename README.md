@@ -37,7 +37,7 @@ As a developer, we expect that you design the proper structure for each entity, 
 
 ### Can I use an external framework?
 
-Yes, feel free to choose any framework that suitsyour needs.
+Yes, feel free to choose any framework that suits your needs.
 
 ### Which programming language should I use?
 

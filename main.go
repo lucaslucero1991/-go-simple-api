@@ -8,7 +8,7 @@ import (
 	"v0/internal/delivery/http/handler"
 	"v0/internal/middleware"
 	"v0/internal/repository"
-	"v0/internal/service"
+	"v0/internal/useCase"
 )
 
 func main() {
@@ -23,11 +23,11 @@ func main() {
 	jobRepository := repository.NewSQLiteJobRepository(db)
 	externalRepository := repository.NewExternalAPIRepository()
 
-	// Service configurations
-	jobService := service.NewJobService(jobRepository, externalRepository)
+	// Usecase configurations
+	jobUseCase := useCase.NewJobUseCase(jobRepository, externalRepository)
 
 	// Handler configurations
-	jobHandler := handler.NewJobHandler(jobService)
+	jobHandler := handler.NewJobHandler(jobUseCase)
 
 	// Create new router
 	router := mux.NewRouter()

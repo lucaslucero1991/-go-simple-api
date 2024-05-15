@@ -1,11 +1,11 @@
-package service_test
+package useCase_test
 
 import (
 	"errors"
 	"testing"
 	"v0/internal/delivery/http/params"
 	"v0/internal/mocks"
-	service2 "v0/internal/service"
+	"v0/internal/useCase"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -25,10 +25,10 @@ func TestCreateJob_WhenCreateJobWasSuccess_ThenReturnJobId(t *testing.T) {
 		Skills:  []string{"Go", "Java", "Python"},
 	}
 
-	service := service2.NewJobService(mockRepo, mockExternalAPIRepo)
+	jobUseCase := useCase.NewJobUseCase(mockRepo, mockExternalAPIRepo)
 
 	// Act
-	jobID, err := service.CreateJob(mockJobRequest)
+	jobID, err := jobUseCase.CreateJob(mockJobRequest)
 
 	// Assert
 	assert.NoError(t, err)
@@ -48,10 +48,10 @@ func TestCreateJob_WhenCreateJobFailed_ThenReturnErr(t *testing.T) {
 		Skills:  []string{"Go", "Java", "Python"},
 	}
 
-	service := service2.NewJobService(mockRepo, mockExternalAPIRepo)
+	jobUseCase := useCase.NewJobUseCase(mockRepo, mockExternalAPIRepo)
 
 	// Act
-	jobID, err := service.CreateJob(mockJobRequest)
+	jobID, err := jobUseCase.CreateJob(mockJobRequest)
 
 	// Assert
 	assert.Error(t, err)
@@ -69,11 +69,11 @@ func TestGetJobs_WhenGetJobsWasSuccess_ThenReturnJobs(t *testing.T) {
 	mockRepo.On("GetJobs", "", "", 0, 0).Return(expectedJobs, nil)
 	mockExternalAPIRepo.On("GetJobs", "", "", 0, 0).Return(expectedJobs, nil)
 
-	service := service2.NewJobService(mockRepo, mockExternalAPIRepo)
+	jobUseCase := useCase.NewJobUseCase(mockRepo, mockExternalAPIRepo)
 	jobParam := &params.JobParam{}
 
 	// Act
-	jobs, err := service.GetJob(jobParam)
+	jobs, err := jobUseCase.GetJob(jobParam)
 
 	// Assert
 	assert.NoError(t, err)
@@ -94,11 +94,11 @@ func TestGetJobs_WhenGetJobsFailed_ThenReturnErr(t *testing.T) {
 	mockExternalAPIRepo.On("GetJobs", "", "", 0, 0).
 		Return(nilEntity, errors.New("external api error"))
 
-	service := service2.NewJobService(mockRepo, mockExternalAPIRepo)
+	jobUseCase := useCase.NewJobUseCase(mockRepo, mockExternalAPIRepo)
 	jobParam := &params.JobParam{}
 
 	// Act
-	jobs, err := service.GetJob(jobParam)
+	jobs, err := jobUseCase.GetJob(jobParam)
 
 	// Assert
 	assert.Error(t, err)

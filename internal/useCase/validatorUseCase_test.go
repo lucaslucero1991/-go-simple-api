@@ -1,15 +1,15 @@
-package service_test
+package useCase_test
 
 import (
 	"errors"
 	"testing"
-	"v0/internal/service"
+	"v0/internal/useCase"
 
 	"github.com/stretchr/testify/assert"
 	"v0/internal/delivery/http/request"
 )
 
-func TestJobValidatorService_Validate(t *testing.T) {
+func TestJobValidatorUseCase_Validate(t *testing.T) {
 	tests := []struct {
 		name        string
 		jobRequest  *request.JobRequest
@@ -32,7 +32,7 @@ func TestJobValidatorService_Validate(t *testing.T) {
 				Country: "USA",
 				Skills:  []string{"Go", "Java", "Python"},
 			},
-			expectedErr: errors.New(service.ErrMissingNameField),
+			expectedErr: errors.New(useCase.ErrMissingNameField),
 		},
 		{
 			name: "Missing country field",
@@ -41,7 +41,7 @@ func TestJobValidatorService_Validate(t *testing.T) {
 				Salary: 5000,
 				Skills: []string{"Go", "Java", "Python"},
 			},
-			expectedErr: errors.New(service.ErrMissingCountryField),
+			expectedErr: errors.New(useCase.ErrMissingCountryField),
 		},
 		{
 			name: "Missing salary field",
@@ -50,7 +50,7 @@ func TestJobValidatorService_Validate(t *testing.T) {
 				Country: "USA",
 				Skills:  []string{"Go", "Java", "Python"},
 			},
-			expectedErr: errors.New(service.ErrMissingSalaryField),
+			expectedErr: errors.New(useCase.ErrMissingSalaryField),
 		},
 		{
 			name: "Missing skills field",
@@ -59,14 +59,14 @@ func TestJobValidatorService_Validate(t *testing.T) {
 				Salary:  5000,
 				Country: "USA",
 			},
-			expectedErr: errors.New(service.ErrMissingSkillsField),
+			expectedErr: errors.New(useCase.ErrMissingSkillsField),
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 
-			validator := service.NewJobValidatorService(test.jobRequest)
+			validator := useCase.NewJobValidatorUseCase(test.jobRequest)
 			err := validator.Validate()
 
 			assert.Equal(t, test.expectedErr, err)
