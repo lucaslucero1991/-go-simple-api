@@ -2,7 +2,7 @@ package useCase
 
 import (
 	"fmt"
-	"v0/internal/delivery/http/request"
+	"v0/internal/domain"
 )
 
 const (
@@ -17,25 +17,27 @@ type IValidatorUseCase interface {
 }
 
 type JobValidatorUseCase struct {
-	jobRequest *request.JobRequest
+	jobDomain *domain.Job
 }
 
-func NewJobValidatorUseCase(jobRequest *request.JobRequest) IValidatorUseCase {
-	return &JobValidatorUseCase{jobRequest: jobRequest}
+func NewJobValidatorUseCase(jobDomain *domain.Job) IValidatorUseCase {
+	return &JobValidatorUseCase{
+		jobDomain: jobDomain,
+	}
 }
 
 func (s *JobValidatorUseCase) Validate() error {
-	if s.jobRequest.Name == "" {
+	if s.jobDomain.Name == "" {
 		return fmt.Errorf(ErrMissingNameField)
 	}
-	if s.jobRequest.Country == "" {
+	if s.jobDomain.Country == "" {
 		return fmt.Errorf(ErrMissingCountryField)
 	}
-	if s.jobRequest.Salary == 0 {
+	if s.jobDomain.Salary == 0 {
 
 		return fmt.Errorf(ErrMissingSalaryField)
 	}
-	if len(s.jobRequest.Skills) == 0 {
+	if len(s.jobDomain.Skills) == 0 {
 
 		return fmt.Errorf(ErrMissingSkillsField)
 	}

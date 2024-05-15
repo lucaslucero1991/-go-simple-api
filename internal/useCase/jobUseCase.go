@@ -3,11 +3,11 @@ package useCase
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"sync"
 	"v0/internal/delivery/http/params"
 	"v0/internal/delivery/http/request"
 	"v0/internal/delivery/http/response"
+	"v0/internal/domain"
 	"v0/internal/entity"
 	"v0/internal/repository"
 )
@@ -32,19 +32,16 @@ func NewJobUseCase(
 
 func (s *JobUseCase) CreateJob(jobRequest *request.JobRequest) (int, error) {
 
-	validator := NewJobValidatorUseCase(jobRequest)
+	jobDomain := domain.NewDomainJob(jobRequest)
+
+	validator := NewJobValidatorUseCase(jobDomain)
 	err := validator.Validate()
 	if err != nil {
 		return 0, errors.New(err.Error())
 	}
 
-	entityJob := entity.NewJob(
-		jobRequest.Name,
-		jobRequest.Country,
-		jobRequest.Salary,
-		strings.Join(jobRequest.Skills, ","))
-
-	jobID, err := s.jobRepository.CreateJob(entityJob)
+	jobEntity := entity.NewJob(jobDomain)
+	jobID, err := s.jobRepository.CreateJob(jobEntity)
 	if err != nil {
 		return 0, err
 	}

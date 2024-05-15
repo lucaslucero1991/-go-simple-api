@@ -3,6 +3,7 @@ package useCase_test
 import (
 	"errors"
 	"testing"
+	"v0/internal/domain"
 	"v0/internal/useCase"
 
 	"github.com/stretchr/testify/assert"
@@ -65,8 +66,8 @@ func TestJobValidatorUseCase_Validate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-
-			validator := useCase.NewJobValidatorUseCase(test.jobRequest)
+			jobDomain := domain.NewDomainJob(test.jobRequest)
+			validator := useCase.NewJobValidatorUseCase(jobDomain)
 			err := validator.Validate()
 
 			assert.Equal(t, test.expectedErr, err)

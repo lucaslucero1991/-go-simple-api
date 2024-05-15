@@ -80,7 +80,7 @@ func (r *ExternalAPIRepository) GetJobs(name string,
 		}
 		skillsStr := strings.Join(skills, ", ")
 
-		job := entity.NewJob(name, country, salary, skillsStr)
+		job := entity.NewJobEntity(name, country, salary, skillsStr)
 		jobs = append(jobs, job)
 	}
 

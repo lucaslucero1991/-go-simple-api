@@ -1,5 +1,10 @@
 package entity
 
+import (
+	"strings"
+	"v0/internal/domain"
+)
+
 type Job struct {
 	ID      int
 	Name    string
@@ -8,7 +13,16 @@ type Job struct {
 	Skills  string
 }
 
-func NewJob(name string, country string, salary int, skills string) *Job {
+func NewJob(jobRequest *domain.Job) *Job {
+	return &Job{
+		Name:    jobRequest.Name,
+		Country: jobRequest.Country,
+		Salary:  jobRequest.Salary,
+		Skills:  strings.Join(jobRequest.Skills, ","),
+	}
+}
+
+func NewJobEntity(name string, country string, salary int, skills string) *Job {
 	return &Job{
 		Name:    name,
 		Country: country,
